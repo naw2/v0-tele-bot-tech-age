@@ -1,15 +1,23 @@
-export async function GET(request) {
-  return Response.json({ message: "Telegram API route" });
-}
+export async function POST(req) {
 
-export async function POST(request) {
-  try {
-    const body = await request.json();
-    
-    // Handle Telegram webhook updates here
-    
-    return Response.json({ ok: true });
-  } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
-  }
+  const body = await req.json()
+
+  const message = body.message.text
+  const chatId = body.message.chat.id
+
+  const reply = "Hello! Your bot is working."
+
+  await fetch(
+    `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+    {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: reply
+      })
+    }
+  )
+
+  return new Response("ok")
 }
